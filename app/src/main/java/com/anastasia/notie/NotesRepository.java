@@ -6,6 +6,7 @@ import java.util.List;
 public class NotesRepository {
     public List<Note> getNotes() {
         List<Note> notes = new ArrayList<Note>();
-        return null;
+        notes.add(new Note(1, "title", "content"));
+        return notes;
     }
 }

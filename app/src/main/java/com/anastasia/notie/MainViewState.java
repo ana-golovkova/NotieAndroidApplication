@@ -1,11 +1,13 @@
 package com.anastasia.notie;
 
+import java.util.List;
+
 public class MainViewState {
     private boolean isLoading;
     private boolean isError;
-    private String content;
+    private List<Note> content;
 
-    public MainViewState(boolean isLoading, boolean isError, String content) {
+    public MainViewState(boolean isLoading, boolean isError, List<Note> content) {
         this.isLoading = isLoading;
         this.isError = isError;
         this.content = content;
@@ -19,7 +21,7 @@ public class MainViewState {
         return isError;
     }
 
-    public String getContent() {
+    public List<Note> getContent() {
         return content;
     }
 
@@ -39,7 +41,7 @@ public class MainViewState {
         return this;
     }
 
-    public MainViewState setContent(String content) {
+    public MainViewState setContent(List<Note> content) {
         this.content = content;
         this.isLoading = false;
         this.isError = false;
