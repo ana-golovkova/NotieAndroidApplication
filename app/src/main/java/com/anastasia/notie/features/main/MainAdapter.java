@@ -1,12 +1,14 @@
-package com.anastasia.notie;
+package com.anastasia.notie.features.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.anastasia.notie.infrastructure.models.Note;
+import com.anastasia.notie.R;
 
 import java.util.List;
 

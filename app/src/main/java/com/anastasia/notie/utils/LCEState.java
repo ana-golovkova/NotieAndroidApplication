@@ -1,13 +1,15 @@
-package com.anastasia.notie;
+package com.anastasia.notie.utils;
+
+import com.anastasia.notie.infrastructure.models.Note;
 
 import java.util.List;
 
-public class MainViewState {
+public abstract class LCEState<K extends LCEState , T> {
     private boolean isLoading;
     private boolean isError;
-    private List<Note> content;
+    private T content;
 
-    public MainViewState(boolean isLoading, boolean isError, List<Note> content) {
+    public LCEState(boolean isLoading, boolean isError, T content) {
         this.isLoading = isLoading;
         this.isError = isError;
         this.content = content;
@@ -21,31 +23,31 @@ public class MainViewState {
         return isError;
     }
 
-    public List<Note> getContent() {
+    public T getContent() {
         return content;
     }
 
-    public MainViewState setLoading() {
+    public K setLoading() {
         this.isLoading = true;
         this.isError = false;
         this.content = null;
 
-        return this;
+        return (K) this;
     }
 
-    public MainViewState setError() {
+    public K setError() {
         this.isError = true;
         this.isLoading = false;
         this.content = null;
 
-        return this;
+        return (K) this;
     }
 
-    public MainViewState setContent(List<Note> content) {
+    public K setContent(T content) {
         this.content = content;
         this.isLoading = false;
         this.isError = false;
 
-        return this;
+        return (K) this;
     }
 }

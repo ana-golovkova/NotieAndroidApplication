@@ -1,4 +1,4 @@
-package com.anastasia.notie;
+package com.anastasia.notie.infrastructure.models;
 
 public class Note {
     private int id;
