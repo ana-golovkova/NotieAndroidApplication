@@ -27,4 +27,12 @@ public class NotesRepository {
     public Observable<List<Note>> getNotes() {
         return notieService.listNotes();
     }
+
+    public Observable<Note> editNote(Note note) {
+        return notieService.editNote(note);
+    }
+
+    public Observable<Note> getNote(int id) {
+        return notieService.getNote(id);
+    }
 }

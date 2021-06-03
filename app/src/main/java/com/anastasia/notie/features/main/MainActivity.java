@@ -1,10 +1,14 @@
 package com.anastasia.notie.features.main;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,8 +16,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anastasia.notie.R;
+import com.anastasia.notie.features.editNote.EditNoteActivity;
+import com.anastasia.notie.infrastructure.models.Note;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainAdapter.Listener {
 
     private MainViewModel viewModel;
     private RecyclerView content;
@@ -21,6 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView errorText;
     private Button errorButton;
     private MainAdapter adapter;
+
+    ActivityResultLauncher<Integer> editNote= registerForActivityResult(new EditNoteActivity.EditNoteContract(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    viewModel.load();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     errorText.setVisibility(View.GONE);
                     errorButton.setVisibility(View.GONE);
                     content.setVisibility(View.VISIBLE);
-                    adapter = new MainAdapter(mainViewState.getContent());
+                    adapter = new MainAdapter(mainViewState.getContent(), MainActivity.this::onNoteClicked);
                     content.setAdapter(adapter);
                 }
             }
@@ -67,5 +81,10 @@ public class MainActivity extends AppCompatActivity {
                 viewModel.load();
             }
         });
+    }
+
+    @Override
+    public void onNoteClicked(Note note) {
+        editNote.launch(note.getId());
     }
 }

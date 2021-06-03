@@ -15,6 +15,11 @@ import java.util.List;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
 
     private List<Note> notesList;
+    private Listener listener;
+
+    public interface Listener{
+        void onNoteClicked(Note note);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView;
@@ -24,13 +29,21 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
             textView = (TextView) view.findViewById(R.id.titleText);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public void bindView(Note note, Listener listener) {
+            textView.setText(note.getTitle());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onNoteClicked(note);
+                }
+            });
         }
+
     }
 
-    public  MainAdapter(List<Note> notesList) {
+    public  MainAdapter(List<Note> notesList, Listener listener) {
         this.notesList = notesList;
+        this.listener = listener;
     }
 
     @Override
@@ -41,7 +54,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int index){
-        viewHolder.getTextView().setText(notesList.get(index).getTitle());
+        viewHolder.bindView(notesList.get(index), listener);
     }
 
     @Override
