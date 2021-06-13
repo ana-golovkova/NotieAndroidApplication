@@ -10,19 +10,19 @@ public class EditNoteState extends LCEState<EditNoteState, EditNoteState.EditNot
 
     public static class EditNoteContent {
         private final Note note;
-        private final DataLoadingState noteUpdateState;
+        private final EditNoteActionState editNoteActionState;
 
-        public EditNoteContent(Note note, DataLoadingState noteUpdateState) {
+        public EditNoteContent(Note note, EditNoteActionState editNoteActionState) {
             this.note = note;
-            this.noteUpdateState = noteUpdateState;
+            this.editNoteActionState = editNoteActionState;
         }
 
         public Note getNote() {
             return note;
         }
 
-        public DataLoadingState getNoteUpdateState() {
-            return noteUpdateState;
+        public EditNoteActionState getEditNoteActionState() {
+            return editNoteActionState;
         }
     }
 
@@ -31,5 +31,28 @@ public class EditNoteState extends LCEState<EditNoteState, EditNoteState.EditNot
         SUCCESS,
         ERROR,
         LOADING
+    }
+    enum ActionType{
+        ADD,
+        EDIT,
+        DELETE
+    }
+
+    public static class EditNoteActionState {
+        private DataLoadingState dataLoadingState;
+        private ActionType actionType;
+
+        public EditNoteActionState(DataLoadingState dataLoadingState, ActionType actionType) {
+            this.dataLoadingState = dataLoadingState;
+            this.actionType = actionType;
+        }
+
+        public DataLoadingState getDataLoadingState() {
+            return dataLoadingState;
+        }
+
+        public ActionType getActionType() {
+            return actionType;
+        }
     }
 }

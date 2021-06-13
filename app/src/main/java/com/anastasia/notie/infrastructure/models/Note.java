@@ -1,24 +1,33 @@
 package com.anastasia.notie.infrastructure.models;
 
-public class Note {
-    private int id;
-    private String title;
-    private String content;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-    public Note(int id, String title, String content) {
+public class Note {
+    @Nullable
+    private final Integer id;
+    @NonNull
+    private final String title;
+    @NonNull
+    private final String content;
+
+    public Note(@Nullable Integer id, @NonNull String title, @NonNull String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
-    public int getId() {
+    @Nullable
+    public Integer getId() {
         return id;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
+    @NonNull
     public String getContent() {
         return content;
     }
