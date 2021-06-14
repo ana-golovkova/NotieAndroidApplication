@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.widget.TextView;
 import com.anastasia.notie.R;
 import com.anastasia.notie.features.editNote.EditNoteActivity;
 import com.anastasia.notie.infrastructure.models.Note;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainAdapter.Listener {
 
@@ -27,8 +31,10 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     private TextView errorText;
     private Button errorButton;
     private MainAdapter adapter;
+    private FloatingActionButton addNoteButton;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    ActivityResultLauncher<Integer> editNote= registerForActivityResult(new EditNoteActivity.EditNoteContract(),
+    ActivityResultLauncher<EditNoteActivity.EditNoteContract.EditNoteContractParameters> editNote= registerForActivityResult(new EditNoteActivity.EditNoteContract(),
             new ActivityResultCallback<Boolean>() {
                 @Override
                 public void onActivityResult(Boolean result) {
@@ -46,14 +52,16 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
             @Override
             public void onChanged(MainViewState mainViewState) {
                 if (mainViewState.isLoading()) {
-                    content.setVisibility(View.GONE);
+                    swipeRefreshLayout.setVisibility(View.GONE);
                     errorText.setVisibility(View.GONE);
                     errorButton.setVisibility(View.GONE);
+                    addNoteButton.setVisibility(View.GONE);
                     loading.setVisibility(View.VISIBLE);
                 }
                 if (mainViewState.isError()) {
-                    content.setVisibility(View.GONE);
+                    swipeRefreshLayout.setVisibility(View.GONE);
                     loading.setVisibility(View.GONE);
+                    addNoteButton.setVisibility(View.GONE);
                     errorText.setVisibility(View.VISIBLE);
                     errorButton.setVisibility(View.VISIBLE);
                 }
@@ -61,8 +69,10 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                     loading.setVisibility(View.GONE);
                     errorText.setVisibility(View.GONE);
                     errorButton.setVisibility(View.GONE);
-                    content.setVisibility(View.VISIBLE);
-                    adapter = new MainAdapter(mainViewState.getContent(), MainActivity.this::onNoteClicked);
+                    addNoteButton.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setRefreshing(false);
+                    adapter.setItems(mainViewState.getContent());
                     content.setAdapter(adapter);
                 }
             }
@@ -73,6 +83,13 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     private void initViews(){
         content = findViewById(R.id.content);
         loading = findViewById(R.id.loading);
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewModel.load();
+            }
+        });
         errorText = findViewById(R.id.errorText);
         errorButton = findViewById(R.id.retry);
         errorButton.setOnClickListener(new View.OnClickListener() {
@@ -81,10 +98,18 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                 viewModel.load();
             }
         });
+        addNoteButton = findViewById(R.id.addNote);
+        addNoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(-1, true));
+            }
+        });
+        adapter = new MainAdapter(new ArrayList<>(), MainActivity.this::onNoteClicked);
     }
 
     @Override
     public void onNoteClicked(Note note) {
-        editNote.launch(note.getId());
+        editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(note.getId(), false));
     }
 }

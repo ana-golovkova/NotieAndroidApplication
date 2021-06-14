@@ -31,7 +31,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private EditNoteViewModel viewModel;
     private EditText title;
     private EditText body;
-    private Button updateNoteButton;
+    private Button mainButton;
     private ProgressBar loading;
     private TextView errorText;
     private Button errorButton;
@@ -67,7 +67,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 if (editNoteState.isLoading()) {
                     title.setVisibility(View.GONE);
                     body.setVisibility(View.GONE);
-                    updateNoteButton.setVisibility(View.GONE);
+                    mainButton.setVisibility(View.GONE);
                     errorText.setVisibility(View.GONE);
                     errorButton.setVisibility(View.GONE);
                     noteUpdateProgressBar.setVisibility(View.GONE);
@@ -77,7 +77,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 if (editNoteState.isError()) {
                     title.setVisibility(View.GONE);
                     body.setVisibility(View.GONE);
-                    updateNoteButton.setVisibility(View.GONE);
+                    mainButton.setVisibility(View.GONE);
                     loading.setVisibility(View.GONE);
                     noteUpdateProgressBar.setVisibility(View.GONE);
                     errorText.setVisibility(View.VISIBLE);
@@ -94,24 +94,37 @@ public class EditNoteActivity extends AppCompatActivity {
 
             }
         });
-        viewModel.load(getIntent().getBooleanExtra(NEW_NOTE_PARAMETER,false),getIntent().getIntExtra(ID_PARAMETER, -1));
+        viewModel.load(isNewNote(),getIntent().getIntExtra(ID_PARAMETER, -1));
 
     }
 
+    private boolean isNewNote() {
+        return getIntent().getBooleanExtra(NEW_NOTE_PARAMETER, false);
+    }
     private void initViews() {
         title = findViewById(R.id.titleText);
         body = findViewById(R.id.bodyText);
-        updateNoteButton = findViewById(R.id.updateNote);
-        updateNoteButton.setOnClickListener(new View.OnClickListener() {
+        mainButton = findViewById(R.id.mainButton);
+        if (isNewNote()) {
+            mainButton.setText(R.string.add_note);
+        } else {
+            mainButton.setText(R.string.edit_note);
+        }
+        mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewModel.updateNote(title.getText().toString(), body.getText().toString());
+                if (isNewNote()) {
+                    viewModel.addNote(title.getText().toString(), body.getText().toString());
+                } else {
+                    viewModel.updateNote(title.getText().toString(), body.getText().toString());
+                }
             }
         });
         loading = findViewById(R.id.loading);
         errorText = findViewById(R.id.errorText);
         errorButton = findViewById(R.id.retry);
         noteUpdateProgressBar = findViewById(R.id.noteUpdateProgressBar);
+
     }
 
     public static class EditNoteContract extends ActivityResultContract<EditNoteContract.EditNoteContractParameters, Boolean> {
@@ -129,7 +142,7 @@ public class EditNoteActivity extends AppCompatActivity {
                 return id;
             }
 
-            public boolean isNewNote() {
+            public boolean getIsNewNote() {
                 return isNewNote;
             }
         }
@@ -138,8 +151,8 @@ public class EditNoteActivity extends AppCompatActivity {
         @Override
         public Intent createIntent(@NonNull Context context, EditNoteContractParameters input) {
             Intent intent = new Intent(context, EditNoteActivity.class);
-            intent.putExtra(EditNoteActivity.ID_PARAMETER, input.id);
-            intent.putExtra(EditNoteActivity.NEW_NOTE_PARAMETER, input.isNewNote);
+            intent.putExtra(EditNoteActivity.ID_PARAMETER, input.getId());
+            intent.putExtra(EditNoteActivity.NEW_NOTE_PARAMETER, input.getIsNewNote());
             return intent;
         }
 
@@ -160,8 +173,8 @@ public class EditNoteActivity extends AppCompatActivity {
                 title.setEnabled(true);
                 body.setVisibility(View.VISIBLE);
                 body.setEnabled(true);
-                updateNoteButton.setVisibility(View.VISIBLE);
-                updateNoteButton.setEnabled(true);
+                mainButton.setVisibility(View.VISIBLE);
+                mainButton.setEnabled(true);
                 break;
             case ERROR:
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(EditNoteActivity.this);
@@ -177,7 +190,7 @@ public class EditNoteActivity extends AppCompatActivity {
                                         viewModel.deleteNote();
                                         break;
                                     case ADD:
-                                        //TODO: viewModel.addNote
+                                        viewModel.addNote(title.getText().toString(), body.getText().toString());
                                         break;
                                 }
                             }
@@ -199,8 +212,8 @@ public class EditNoteActivity extends AppCompatActivity {
                 title.setEnabled(false);
                 body.setVisibility(View.VISIBLE);
                 body.setEnabled(false);
-                updateNoteButton.setVisibility(View.VISIBLE);
-                updateNoteButton.setEnabled(false);
+                mainButton.setVisibility(View.VISIBLE);
+                mainButton.setEnabled(false);
                 noteUpdateProgressBar.setVisibility(View.VISIBLE);
                 break;
             case SUCCESS:

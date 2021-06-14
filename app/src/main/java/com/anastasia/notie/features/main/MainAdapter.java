@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.anastasia.notie.infrastructure.models.Note;
 import com.anastasia.notie.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
@@ -60,5 +61,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
     @Override
     public int getItemCount() {
         return notesList.size();
+    }
+
+    public void setItems(List<Note> notes) {
+        this.notesList = notes;
+        notifyDataSetChanged();
     }
 }
