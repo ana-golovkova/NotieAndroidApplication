@@ -249,4 +249,5 @@ public class EditNoteActivity extends AppCompatActivity {
 
         return null;
     }
+
 }

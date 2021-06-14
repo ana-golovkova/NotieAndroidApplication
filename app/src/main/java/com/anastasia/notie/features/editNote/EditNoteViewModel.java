@@ -121,8 +121,32 @@ public class EditNoteViewModel extends ViewModel {
         });
     }
 
-    public void addNote() {
+    public void addNote(String title, String body) {
+        Note newNote = new Note(null, title, body);
+        state.postValue(this.state.getValue().setContent(new EditNoteState.EditNoteContent(newNote, new EditNoteState.EditNoteActionState(EditNoteState.DataLoadingState.LOADING, EditNoteState.ActionType.ADD))));
+        addNote.execute(newNote).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Note>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Note note) {
+                state.postValue(state.getValue().setContent(new EditNoteState.EditNoteContent(newNote, new EditNoteState.EditNoteActionState(EditNoteState.DataLoadingState.SUCCESS, EditNoteState.ActionType.ADD))));
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                state.postValue(state.getValue().setContent(new EditNoteState.EditNoteContent(newNote, new EditNoteState.EditNoteActionState(EditNoteState.DataLoadingState.ERROR, EditNoteState.ActionType.ADD))));
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
+
     public void errorDismissed() {
         state.postValue(state.getValue().
                 setContent(new EditNoteState.EditNoteContent(state.getValue().getContent().getNote(), new EditNoteState.EditNoteActionState(EditNoteState.DataLoadingState.IDLE, EditNoteState.ActionType.EDIT))));
