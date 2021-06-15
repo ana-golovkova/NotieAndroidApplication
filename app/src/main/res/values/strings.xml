@@ -2,4 +2,11 @@
     <string name="app_name">Notie</string>
     <string name="add_note">Add Note</string>
     <string name="edit_note">Edit Note</string>
+    <string name="main_page_title">Notie</string>
+    <string name="retry">Retry</string>
+    <string name="title">Note Title</string>
+    <string name="body">Body</string>
+
+
+
 </resources>

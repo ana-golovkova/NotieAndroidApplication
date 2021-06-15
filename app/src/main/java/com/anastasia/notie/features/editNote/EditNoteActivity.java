@@ -50,6 +50,9 @@ public class EditNoteActivity extends AppCompatActivity {
             case R.id.delete:
                 viewModel.deleteNote();
                 return true;
+            case android.R.id.home:
+                this.finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -61,6 +64,8 @@ public class EditNoteActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(EditNoteViewModel.class);
         setContentView(R.layout.activity_edit_note);
         initViews();
+        setSupportActionBar(findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         viewModel.getState().observe(this, new Observer<EditNoteState>() {
             @Override
             public void onChanged(EditNoteState editNoteState) {
