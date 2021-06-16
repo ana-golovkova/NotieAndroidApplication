@@ -3,6 +3,7 @@ package com.anastasia.notie.infrastructure.sources;
 import com.anastasia.notie.infrastructure.models.Note;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -15,7 +16,7 @@ import retrofit2.http.Query;
 
 public interface NotieService {
     @GET("notes")
-    Observable<List<Note>> listNotes();
+    Observable<Map<Integer,Note>> listNotes();
 
     @PUT("note")
     Observable<Note> editNote(@Body Note note);

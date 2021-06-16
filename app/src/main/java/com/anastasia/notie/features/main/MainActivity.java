@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     private FloatingActionButton addNoteButton;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    ActivityResultLauncher<EditNoteActivity.EditNoteContract.EditNoteContractParameters> editNote= registerForActivityResult(new EditNoteActivity.EditNoteContract(),
+    ActivityResultLauncher<EditNoteActivity.EditNoteContract.EditNoteContractParameters> editNote = registerForActivityResult(new EditNoteActivity.EditNoteContract(),
             new ActivityResultCallback<Boolean>() {
                 @Override
                 public void onActivityResult(Boolean result) {
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
         viewModel.load();
     }
 
-    private void initViews(){
+    private void initViews() {
         content = findViewById(R.id.content);
         loading = findViewById(R.id.loading);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
@@ -106,11 +106,11 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                 editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(-1, true));
             }
         });
-        adapter = new MainAdapter(new ArrayList<>(), MainActivity.this::onNoteClicked);
+        adapter = new MainAdapter(MainActivity.this);
     }
 
     @Override
-    public void onNoteClicked(Note note) {
-        editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(note.getId(), false));
+    public void onNoteClicked(Integer noteId) {
+        editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(noteId, false));
     }
 }

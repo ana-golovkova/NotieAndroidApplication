@@ -10,6 +10,7 @@ import com.anastasia.notie.infrastructure.usecases.GetNotes;
 import com.anastasia.notie.infrastructure.models.Note;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,14 +34,14 @@ public class MainViewModel extends ViewModel {
 
     public void load() {
         state.postValue(this.state.getValue().setLoading());
-        getNotes.execute().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<Note>>() {
+        getNotes.execute().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Map<Integer,Note>>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(@NonNull List<Note> notes) {
+            public void onNext(@NonNull Map<Integer,Note> notes) {
                 state.postValue(state.getValue().setContent(notes));
             }
 
@@ -54,26 +55,5 @@ public class MainViewModel extends ViewModel {
 
             }
         });
-//        getNotes.execute().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<Note>>() {
-//            @Override
-//            public void onSubscribe(@NonNull Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(@NonNull List<Note> notes) {
-//                state.postValue(state.getValue().setContent(notes));
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Throwable e) {
-//                state.postValue(state.getValue().setError());
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//
-//            }
-//        });
     }
 }

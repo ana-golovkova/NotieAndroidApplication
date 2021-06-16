@@ -1,13 +1,12 @@
 package com.anastasia.notie.infrastructure.repositories;
 
-import android.app.Application;
-
 import com.anastasia.notie.NotieApplication;
 import com.anastasia.notie.infrastructure.models.Note;
 import com.anastasia.notie.infrastructure.sources.NotieService;
 import com.chuckerteam.chucker.api.ChuckerInterceptor;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -32,7 +31,7 @@ public class NotesRepository {
         notieService = retrofit.create(NotieService.class);
     }
 
-    public Observable<List<Note>> getNotes() {
+    public Observable<Map<Integer,Note>> getNotes() {
         return notieService.listNotes();
     }
 

@@ -10,61 +10,65 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.anastasia.notie.infrastructure.models.Note;
 import com.anastasia.notie.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
+import java.util.Collections;
+import java.util.Map;
 
-    private List<Note> notesList;
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+
+    private Map<Integer, Note> notesMap = Collections.emptyMap();
     private Listener listener;
 
-    public interface Listener{
-        void onNoteClicked(Note note);
+    public interface Listener {
+        void onNoteClicked(Integer noteId);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
             textView = (TextView) view.findViewById(R.id.titleText);
         }
 
-        public void bindView(Note note, Listener listener) {
+        public void bindView(Integer id, Note note, Listener listener) {
             textView.setText(note.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onNoteClicked(note);
+                    listener.onNoteClicked(id);
                 }
             });
         }
 
     }
 
-    public  MainAdapter(List<Note> notesList, Listener listener) {
-        this.notesList = notesList;
+    public MainAdapter(Listener listener) {
         this.listener = listener;
     }
 
+    @NotNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_note, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_note, viewGroup, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int index){
-        viewHolder.bindView(notesList.get(index), listener);
+    public void onBindViewHolder(@NotNull ViewHolder viewHolder, final int index) {
+        if (notesMap.containsKey(index)) {
+            viewHolder.bindView(index, notesMap.get(index), listener);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return notesList.size();
+        return notesMap.size();
     }
 
-    public void setItems(List<Note> notes) {
-        this.notesList = notes;
+    public void setItems(Map<Integer, Note> notes) {
+        this.notesMap = notes;
         notifyDataSetChanged();
     }
 }
