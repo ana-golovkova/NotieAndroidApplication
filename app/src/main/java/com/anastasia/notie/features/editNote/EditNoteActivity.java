@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anastasia.notie.R;
+import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteAction;
+import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteFieldType;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class EditNoteActivity extends AppCompatActivity {
@@ -32,13 +36,16 @@ public class EditNoteActivity extends AppCompatActivity {
     private EditText title;
     private EditText body;
     private Button mainButton;
+    private Button revertButton;
     private ProgressBar loading;
     private TextView errorText;
     private Button errorButton;
     private ProgressBar noteUpdateProgressBar;
 
+    private EditNoteHistoryController editNoteHistoryController;
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_edit_note, menu);
         return true;
@@ -61,6 +68,7 @@ public class EditNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        editNoteHistoryController = new EditNoteHistoryController();
         viewModel = new ViewModelProvider(this).get(EditNoteViewModel.class);
         setContentView(R.layout.activity_edit_note);
         initViews();
@@ -99,13 +107,14 @@ public class EditNoteActivity extends AppCompatActivity {
 
             }
         });
-        viewModel.load(isNewNote(),getIntent().getIntExtra(ID_PARAMETER, -1));
+        viewModel.load(isNewNote(), getIntent().getIntExtra(ID_PARAMETER, -1));
 
     }
 
     private boolean isNewNote() {
         return getIntent().getBooleanExtra(NEW_NOTE_PARAMETER, false);
     }
+
     private void initViews() {
         title = findViewById(R.id.titleText);
         body = findViewById(R.id.bodyText);
@@ -125,11 +134,88 @@ public class EditNoteActivity extends AppCompatActivity {
                 }
             }
         });
+        title.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (title.getTag() != null) {
+                    editNoteHistoryController.getLastActionAndRevert();
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                if (count != after){
+                    editNoteHistoryController.addItem(new EditNoteAction(EditNoteFieldType.TITLE, s.toString()));
+                    revertButton.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+            }
+        });
+        body.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (body.getTag() != null) {
+                    editNoteHistoryController.getLastActionAndRevert();
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                if (count != after){
+                    editNoteHistoryController.addItem(new EditNoteAction(EditNoteFieldType.DESCRIPTION, s.toString()));
+                    revertButton.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+            }
+        });
+        revertButton = findViewById(R.id.revertButton);
+        revertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleEditNoteAction();
+            }
+        });
         loading = findViewById(R.id.loading);
         errorText = findViewById(R.id.errorText);
         errorButton = findViewById(R.id.retry);
         noteUpdateProgressBar = findViewById(R.id.noteUpdateProgressBar);
 
+    }
+
+    private void handleEditNoteAction() {
+        EditNoteAction action = editNoteHistoryController.getLastActionAndRevert();
+        switch (action.getFieldType()) {
+            case TITLE:
+                title.setTag("arbitrary value");
+                title.setText(action.getLastValue());
+                title.setTag(null);
+                break;
+            case DESCRIPTION:
+                body.setTag("arbitrary value");
+                body.setText(action.getLastValue());
+                body.setTag(null);
+                break;
+        }
+        if (editNoteHistoryController.hasPreviousActions()) {
+            revertButton.setVisibility(View.VISIBLE);
+        } else {
+            revertButton.setVisibility(View.GONE);
+        }
     }
 
     public static class EditNoteContract extends ActivityResultContract<EditNoteContract.EditNoteContractParameters, Boolean> {
@@ -187,7 +273,7 @@ public class EditNoteActivity extends AppCompatActivity {
                         .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int id) {
-                                switch(editNoteActionState.getActionType()){
+                                switch (editNoteActionState.getActionType()) {
                                     case EDIT:
                                         viewModel.updateNote(title.getText().toString(), body.getText().toString());
                                         break;
@@ -230,7 +316,7 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private String getSuccessText(EditNoteState.ActionType actionType) {
-        switch(actionType){
+        switch (actionType) {
             case ADD:
                 return "Note added successfully";
             case EDIT:
@@ -243,7 +329,7 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private String getErrorTextTitle(EditNoteState.ActionType actionType) {
-        switch(actionType){
+        switch (actionType) {
             case ADD:
                 return "Error creating note";
             case EDIT:
@@ -256,7 +342,7 @@ public class EditNoteActivity extends AppCompatActivity {
     }
 
     private String getErrorTextMessage(EditNoteState.ActionType actionType) {
-        switch(actionType){
+        switch (actionType) {
             case ADD:
                 return "Something went wrong creating the note";
             case EDIT:
