@@ -43,7 +43,7 @@ public class NotesRepository {
         return notieService.getNote(id);
     }
 
-    public Completable deleteNode(int id) {
+    public Completable deleteNote(int id) {
         return notieService.deleteNode(id);
     }
 

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.anastasia.notie.R;
 import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteAction;
 import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteFieldType;
+import com.anastasia.notie.utils.DataLoadingState;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class EditNoteActivity extends AppCompatActivity {
@@ -99,7 +100,7 @@ public class EditNoteActivity extends AppCompatActivity {
 
                 if (editNoteState.getContent() != null) {
                     handleEditNoteActionState(editNoteState.getContent().getEditNoteActionState());
-                    if (editNoteState.getContent().getEditNoteActionState().getDataLoadingState() == EditNoteState.DataLoadingState.IDLE) {
+                    if (editNoteState.getContent().getEditNoteActionState().getDataLoadingState() == DataLoadingState.IDLE) {
                         title.setText(editNoteState.getContent().getNote().getTitle());
                         body.setText(editNoteState.getContent().getNote().getContent());
                     }

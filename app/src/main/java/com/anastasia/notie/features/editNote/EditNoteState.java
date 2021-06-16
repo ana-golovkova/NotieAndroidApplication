@@ -1,6 +1,7 @@
 package com.anastasia.notie.features.editNote;
 
 import com.anastasia.notie.infrastructure.models.Note;
+import com.anastasia.notie.utils.DataLoadingState;
 import com.anastasia.notie.utils.LCEState;
 
 public class EditNoteState extends LCEState<EditNoteState, EditNoteState.EditNoteContent> {
@@ -26,12 +27,7 @@ public class EditNoteState extends LCEState<EditNoteState, EditNoteState.EditNot
         }
     }
 
-    enum DataLoadingState {
-        IDLE,
-        SUCCESS,
-        ERROR,
-        LOADING
-    }
+
     enum ActionType{
         ADD,
         EDIT,
