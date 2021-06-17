@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.anastasia.notie.R;
 import com.anastasia.notie.features.editNote.EditNoteActivity;
 import com.anastasia.notie.infrastructure.models.Note;
+import com.anastasia.notie.infrastructure.repositories.AnalyticsRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     private FloatingActionButton addNoteButton;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private AnalyticsRepository analyticsRepository;
+
     ActivityResultLauncher<EditNoteActivity.EditNoteContract.EditNoteContractParameters> editNote = registerForActivityResult(new EditNoteActivity.EditNoteContract(),
             new ActivityResultCallback<Boolean>() {
                 @Override
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        analyticsRepository = new AnalyticsRepository();
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         setContentView(R.layout.activity_main);
         initViews();
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                analyticsRepository.recordEvent("AddNewNoteClickedEvent");
                 editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(-1, true));
             }
         });
@@ -111,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
 
     @Override
     public void onNoteClicked(Integer noteId) {
+        analyticsRepository.recordEvent("NoteClickedEvent");
         editNote.launch(new EditNoteActivity.EditNoteContract.EditNoteContractParameters(noteId, false));
     }
 }
