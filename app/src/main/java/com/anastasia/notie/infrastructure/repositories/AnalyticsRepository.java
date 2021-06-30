@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -21,17 +23,10 @@ public class AnalyticsRepository {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final AnalyticsService analyticsService;
 
+    @Inject
+    public AnalyticsRepository(AnalyticsService analyticsService) {
+        this.analyticsService = analyticsService;
 
-    public AnalyticsRepository() {
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new ChuckerInterceptor.Builder(NotieApplication.getContext()).build()).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl("https://notie-fifnnkcglq-ts.a.run.app/")
-                .build();
-
-        analyticsService = retrofit.create(AnalyticsService.class);
         executor.execute(new Runnable() {
             @Override
             public void run() {

@@ -8,6 +8,8 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
@@ -19,16 +21,9 @@ public class NotesRepository {
 
     private NotieService notieService;
 
-    public NotesRepository() {
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new ChuckerInterceptor.Builder(NotieApplication.getContext()).build()).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl("https://notie-fifnnkcglq-ts.a.run.app/")
-                .build();
-
-        notieService = retrofit.create(NotieService.class);
+    @Inject
+    public NotesRepository(NotieService notieService) {
+        this.notieService = notieService;
     }
 
     public Observable<Map<Integer,Note>> getNotes() {

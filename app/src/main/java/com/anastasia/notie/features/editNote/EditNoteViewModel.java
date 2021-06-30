@@ -14,12 +14,16 @@ import com.anastasia.notie.infrastructure.usecases.DeleteNote;
 import com.anastasia.notie.infrastructure.usecases.EditNote;
 import com.anastasia.notie.infrastructure.usecases.GetNote;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+@HiltViewModel
 public class EditNoteViewModel extends ViewModel {
     private static final String TAG = "EditNoteViewModel";
     
@@ -29,11 +33,12 @@ public class EditNoteViewModel extends ViewModel {
     private final DeleteNote deleteNote;
     private final AddNote addNote;
 
-    public EditNoteViewModel() {
-        this.editNote = new EditNote();
-        this.getNote = new GetNote();
-        this.deleteNote = new DeleteNote();
-        this.addNote = new AddNote();
+    @Inject
+    public EditNoteViewModel(GetNote getNote, EditNote editNote, DeleteNote deleteNote, AddNote addNote) {
+        this.editNote = editNote;
+        this.getNote = getNote;
+        this.deleteNote = deleteNote;
+        this.addNote = addNote;
         this.state = new MutableLiveData<>();
         this.state.setValue(new EditNoteState(true, false, null));
     }

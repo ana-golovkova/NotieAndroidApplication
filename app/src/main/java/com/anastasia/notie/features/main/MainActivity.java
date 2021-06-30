@@ -25,6 +25,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.hilt.EntryPoint;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity implements MainAdapter.Listener {
 
     private MainViewModel viewModel;
@@ -35,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     private MainAdapter adapter;
     private FloatingActionButton addNoteButton;
     private SwipeRefreshLayout swipeRefreshLayout;
-
-    private AnalyticsRepository analyticsRepository;
+    @Inject
+    AnalyticsRepository analyticsRepository;
 
     ActivityResultLauncher<EditNoteActivity.EditNoteContract.EditNoteContractParameters> editNote = registerForActivityResult(new EditNoteActivity.EditNoteContract(),
             new ActivityResultCallback<Boolean>() {
@@ -49,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        analyticsRepository = new AnalyticsRepository();
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         setContentView(R.layout.activity_main);
         initViews();
@@ -77,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                     addNoteButton.setVisibility(View.VISIBLE);
                     swipeRefreshLayout.setVisibility(View.VISIBLE);
                     swipeRefreshLayout.setRefreshing(false);
-                    adapter.setItems(mainViewState.getContent());
+                    adapter.setItems(new ArrayList<>(mainViewState.getContent().values()));
                     content.setAdapter(adapter);
                 }
             }

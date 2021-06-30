@@ -41,8 +41,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
-    implementation "com.google.dagger:hilt-android:2.28-alpha"
-    kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
+    implementation "com.google.dagger:hilt-android:2.37"
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     debugImplementation "com.github.chuckerteam.chucker:library:3.4.0"
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.4.0"

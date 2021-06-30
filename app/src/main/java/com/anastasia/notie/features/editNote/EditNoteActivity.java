@@ -29,6 +29,9 @@ import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteA
 import com.anastasia.notie.features.editNote.EditNoteHistoryController.EditNoteFieldType;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class EditNoteActivity extends AppCompatActivity {
     public static final String ID_PARAMETER = "id_parameter";
     public static final String NEW_NOTE_PARAMETER = "new_note_parameter";

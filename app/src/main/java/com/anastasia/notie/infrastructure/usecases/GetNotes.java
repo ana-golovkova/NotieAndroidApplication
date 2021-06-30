@@ -6,13 +6,16 @@ import com.anastasia.notie.infrastructure.repositories.NotesRepository;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
 public class GetNotes {
     private final NotesRepository notesRepository;
 
-    public GetNotes() {
-        this.notesRepository = new NotesRepository();
+    @Inject
+    public GetNotes(NotesRepository notesRepository) {
+        this.notesRepository = notesRepository;
     }
 
     public Observable<Map<Integer,Note>> execute() {

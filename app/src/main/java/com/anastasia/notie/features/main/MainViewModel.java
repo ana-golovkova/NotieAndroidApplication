@@ -12,18 +12,23 @@ import com.anastasia.notie.infrastructure.models.Note;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+@HiltViewModel
 public class MainViewModel extends ViewModel {
 
     private final MutableLiveData<MainViewState> state;
     private final GetNotes getNotes;
 
-    public MainViewModel() {
-        this.getNotes = new GetNotes();
+    @Inject
+    public MainViewModel(GetNotes getNotes) {
+        this.getNotes = getNotes;
         this.state = new MutableLiveData<>();
         this.state.setValue(new MainViewState(true, false, null));
     }

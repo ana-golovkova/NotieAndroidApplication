@@ -3,6 +3,9 @@ package com.anastasia.notie;
 import android.app.Application;
 import android.content.Context;
 
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class NotieApplication extends Application {
     private static NotieApplication instance;
 

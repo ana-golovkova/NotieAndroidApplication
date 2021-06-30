@@ -13,11 +13,12 @@ import com.anastasia.notie.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private Map<Integer, Note> notesMap = Collections.emptyMap();
+    private List<Note> notesMap = Collections.emptyList();
     private Listener listener;
 
     public interface Listener {
@@ -25,15 +26,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView textViewTitle;
+        private final TextView textViewSubtitle;
 
         public ViewHolder(View view) {
             super(view);
-            textView = (TextView) view.findViewById(R.id.titleText);
+            textViewTitle = (TextView) view.findViewById(R.id.title);
+            textViewSubtitle = (TextView) view.findViewById(R.id.subtitleText);
         }
 
         public void bindView(Integer id, Note note, Listener listener) {
-            textView.setText(note.getTitle());
+            textViewTitle.setText(note.getTitle());
+            textViewSubtitle.setText(note.getContent());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -57,9 +61,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NotNull ViewHolder viewHolder, final int index) {
-        if (notesMap.containsKey(index)) {
-            viewHolder.bindView(index, notesMap.get(index), listener);
-        }
+        viewHolder.bindView(index, notesMap.get(index), listener);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         return notesMap.size();
     }
 
-    public void setItems(Map<Integer, Note> notes) {
+    public void setItems(List<Note> notes) {
         this.notesMap = notes;
         notifyDataSetChanged();
     }
